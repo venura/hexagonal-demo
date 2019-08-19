@@ -1,11 +1,9 @@
-Writing better Gherkin:
-
-https://cucumber.io/docs/bdd/better-gherkin/
 Story #1
 Story: Register with email and password
 In order to access the demo web app
-As an Mazarin employee
+As regular user
 I want to create an account with my email and a secure password
+
 Acceptance criteria:
 - User should be able to register with email and password
 
@@ -24,6 +22,5 @@ Acceptance criteria:
 - password should contain at least 1 digit/number
 - password should contain at least 1 uppercase
 - password should contain at least 1 lowercase
-MARK
 - I should get an error message telling me what I
 did wrong if I enter an insecure password

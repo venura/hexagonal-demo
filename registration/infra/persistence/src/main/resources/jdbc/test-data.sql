@@ -1,0 +1,1 @@
+insert into app_user values (1,'chal@mazarin.lk','psswd123','Active');

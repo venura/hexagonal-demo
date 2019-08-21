@@ -18,6 +18,5 @@ public interface UserService {
                         )
                 :
                 Either.left(pendingUser.getLeft());
-
     }
 }

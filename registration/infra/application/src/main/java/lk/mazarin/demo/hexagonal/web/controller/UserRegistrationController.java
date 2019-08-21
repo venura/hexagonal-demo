@@ -1,37 +1,64 @@
 package lk.mazarin.demo.hexagonal.web.controller;
 
-import lk.mazarin.demo.hexagonal.persistence.respository.UserDBRepository;
-import lk.mazarin.demo.hexagonal.persistence.service.UserServiceImpl;
 import lk.mazarin.demo.hexagonal.registration.domain.user.service.api.UserService;
 import lk.mazarin.demo.hexagonal.registration.domain.user.service.spi.NotificationService;
+import lk.mazarin.demo.hexagonal.registration.domain.user.service.spi.UserRepo;
 import lk.mazarin.demo.hexagonal.registration.domain.user.types.*;
-import org.springframework.web.bind.annotation.*;
+import lk.mazarin.demo.hexagonal.web.resource.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 @RestController
 @RequestMapping("user")
 public class UserRegistrationController {
+    private static final Logger log = LoggerFactory.getLogger(UserRegistrationController.class);
 
-    private final UserDBRepository userDBRepository;
+    private final UserRepo userRepo;
 
     private final UserService userService;
 
     private final NotificationService notificationService;
 
-    public UserRegistrationController(UserDBRepository userDBRepository, UserService userService, NotificationService notificationService1) {
-        this.userDBRepository = userDBRepository;
+    public UserRegistrationController(UserRepo userRepo, UserService userService, NotificationService notificationService1) {
+        this.userRepo = userRepo;
         this.userService = userService;
         this.notificationService = notificationService1;
     }
 
-    @GetMapping("/create")
-    public String getActiveUser(@RequestParam String email,
-                                @RequestParam String password,
-                                @RequestParam String verificationCode) {
-        //User user = userDBRepository.findUser(new UserId(id)).getOrElseThrow(() -> new RuntimeException(String.format("User with id: %d not found", id)));
-        var result = userService.register(userDBRepository,notificationService, new PendingUser(new Email(email),new Password(password),new VerificationCode(verificationCode)));
-        if(result.isLeft()){
-            result.getLeft().forEach( s -> System.out.println(s.getMessage()));
+    @PostMapping("/create")
+    public ResponseEntity register(@Valid @RequestBody User userResource) {
+        var result = userService.register(userRepo, notificationService,
+                new PendingUser(
+                        new Email(userResource.getEmail()),
+                        new Password(userResource.getPassword()),
+                        new VerificationCode(userResource.getVerificationCode())
+                )
+        );
+        if (result.isRight()) {
+            ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(result.get());
         }
-        return "";
+        result.getLeft().forEach(s -> log.error(s.getMessage()));
+        return ResponseEntity
+                .status(SC_BAD_REQUEST)
+                .body(Map.of(
+                        "errors", result.getLeft()
+                                .stream().map(Failure::getMessage)
+                                .collect(Collectors.toList())
+                ));
     }
+
 }

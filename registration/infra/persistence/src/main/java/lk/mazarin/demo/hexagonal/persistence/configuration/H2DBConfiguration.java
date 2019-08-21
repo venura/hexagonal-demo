@@ -5,6 +5,7 @@ import lk.mazarin.demo.hexagonal.persistence.service.MockEmailNotificationServic
 import lk.mazarin.demo.hexagonal.persistence.service.UserServiceImpl;
 import lk.mazarin.demo.hexagonal.registration.domain.user.service.api.UserService;
 import lk.mazarin.demo.hexagonal.registration.domain.user.service.spi.NotificationService;
+import lk.mazarin.demo.hexagonal.registration.domain.user.service.spi.UserRepo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -29,7 +30,7 @@ public class H2DBConfiguration {
     }
 
     @Bean
-    public UserDBRepository userDBRepository(JdbcTemplate jdbcTemplate) {
+    public UserRepo userDBRepository(JdbcTemplate jdbcTemplate) {
         return new UserDBRepository(jdbcTemplate);
     }
 

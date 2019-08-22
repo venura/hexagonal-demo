@@ -1,4 +1,4 @@
-package lk.mazarin.demo.hexagonal.persistence.configuration;
+package lk.mazarin.demo.hexagonal.persistence;
 
 import lk.mazarin.demo.hexagonal.persistence.respository.UserDBRepository;
 import lk.mazarin.demo.hexagonal.persistence.service.MockEmailNotificationService;

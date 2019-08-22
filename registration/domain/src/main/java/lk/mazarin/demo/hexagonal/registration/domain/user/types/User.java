@@ -1,19 +1,11 @@
 package lk.mazarin.demo.hexagonal.registration.domain.user.types;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class User {
-    private Email email;
-    private Password password;
-
-    protected User(Email email, Password password) {
-        this.email = email;
-        this.password = password;
-    }
-
-    public Email getEmail() {
-        return email;
-    }
-
-    public Password getPassword() {
-        return password;
-    }
+    protected final Email email;
+    protected final Password password;
 }

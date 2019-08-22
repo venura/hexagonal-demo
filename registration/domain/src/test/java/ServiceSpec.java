@@ -15,18 +15,19 @@ public class ServiceSpec {
     @Test
     public void should_notify_email_upon_successful_registration() {
         lk.mazarin.demo.hexagonal.registration.domain.user.service.api.UserService userService = new UserService();
+        var pendingUser = new PendingUser(
+                new Email("chal@sd.lk"),
+                new Password("sdfd34"),
+                new VerificationCode("wejkljsdf"));
         UserRepo userRepo = Mockito.mock(UserRepo.class);
-        Mockito.when(userRepo.addUser(Mockito.any(PendingUser.class))).thenReturn(Either.right(new VerificationCode("qwer1234")));
+        Mockito.when(userRepo.addUser(Mockito.any(PendingUser.class))).thenReturn(Either.right(new PendingUserId(1)));
         NotificationService notificationService = Mockito.mock(NotificationService.class);
         Mockito.when(notificationService.notifyEmailVerification(Mockito.any(Email.class), Mockito.any(VerificationCode.class))).thenReturn(Either.right(Boolean.TRUE));
         var resp = userService.register(
                 userRepo,
-                notificationService,
-                new PendingUser(
-                        new Email("chal@sd.lk"),
-                        new Password("sdfd34"),
-                        new VerificationCode("wejkljsdf"))
-        );
+                notificationService,pendingUser
+
+                );
         assertEquals(Boolean.TRUE, resp.get());
     }
 

@@ -13,8 +13,8 @@ public interface UserService {
         var pendingUser = PendingUser.validatePendingUser(user);
         return pendingUser.isRight() ?
                 repo.addUser(pendingUser.get())
-                        .flatMap(verificationCode -> notificationService
-                                .notifyEmailVerification(user.getEmail(), verificationCode)
+                        .flatMap(id -> notificationService
+                                .notifyEmailVerification(user.getEmail(), user.getVerificationCode())
                         )
                 :
                 Either.left(pendingUser.getLeft());

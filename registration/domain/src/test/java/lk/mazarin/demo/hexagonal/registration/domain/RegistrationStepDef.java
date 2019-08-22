@@ -27,7 +27,7 @@ public class RegistrationStepDef {
     public void userIsNotAlreadyRegisteredWithDemoWebApp(String user) {
         userService = new lk.mazarin.demo.hexagonal.registration.domain.user.service.UserService();
         userRepo = Mockito.mock(UserRepo.class);
-        Mockito.when(userRepo.addUser(Mockito.any(PendingUser.class))).thenReturn(Either.right(new VerificationCode("qwer1234")));
+        Mockito.when(userRepo.addUser(Mockito.any(PendingUser.class))).thenReturn(Either.right(new PendingUserId(1)));
         notificationService = Mockito.mock(NotificationService.class);
         Mockito.when(notificationService.notifyEmailVerification(Mockito.any(Email.class), Mockito.any(VerificationCode.class))).thenReturn(Either.right(Boolean.TRUE));
     }

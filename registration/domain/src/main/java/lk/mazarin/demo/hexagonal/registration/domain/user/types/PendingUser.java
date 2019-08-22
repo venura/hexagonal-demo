@@ -1,8 +1,10 @@
 package lk.mazarin.demo.hexagonal.registration.domain.user.types;
 
 import io.vavr.control.Either;
+import lombok.Builder;
 import lombok.Getter;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,6 +13,7 @@ import java.util.stream.Collectors;
 public class PendingUser extends User {
     private final VerificationCode verificationCode;
 
+    @Builder(builderMethodName = "pendingUser", toBuilder = true)
     public PendingUser(Email email, Password password, VerificationCode verificationCode) {
         super(email, password);
         this.verificationCode = verificationCode;
@@ -24,9 +27,9 @@ public class PendingUser extends User {
 
 
         var leftCollection = inputParams.stream()
-                .filter( x -> x.isLeft())
-                .map(x -> x.getLeft())
-                .flatMap(x -> x.stream())
+                .filter(Either::isLeft)
+                .map(Either::getLeft)
+                .flatMap(Collection::stream)
                 .distinct()
                 .collect(Collectors.toList());
 

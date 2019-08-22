@@ -1,6 +1,6 @@
 package lk.mazarin.demo.hexagonal.web;
 
-import lk.mazarin.demo.hexagonal.persistence.configuration.H2DBConfiguration;
+import lk.mazarin.demo.hexagonal.persistence.H2DBConfiguration;
 import lk.mazarin.demo.hexagonal.web.configuration.RestConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

@@ -8,10 +8,12 @@ import java.util.List;
 
 
 public interface UserRepo {
-    Either<List<Failure>, VerificationCode> addUser(PendingUser user);
+    Either<List<Failure>, PendingUserId> addUser(PendingUser user);
 
     Either<Failure, ActiveUser> setEmailAsVerified(VerificationCode code);
 
     Option<User> findUser(UserId userId);
+
+    Option<User> findPendingUser(PendingUserId id);
 
 }

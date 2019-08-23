@@ -19,7 +19,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.vavr.API.$;
 import static io.vavr.API.Case;
@@ -29,6 +32,7 @@ import static io.vavr.control.Option.of;
 
 @Repository
 public class UserDBRepository implements UserRepo {
+
     private JdbcTemplate jdbcTemplate;
 
     public UserDBRepository(JdbcTemplate jdbcTemplate) {
@@ -38,12 +42,13 @@ public class UserDBRepository implements UserRepo {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Either<List<Failure>, PendingUserId> addUser(PendingUser user) {
+        String INSERT_VERIFICATION = "INSERT INTO verification(email,password,code) VALUES(?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         var result =
                 Try
                         .ofSupplier(() -> of(
                                 jdbcTemplate.update(con -> {
-                                    PreparedStatement ps = con.prepareStatement("INSERT INTO verification(email,password,code) VALUES(?,?,?)");
+                                    PreparedStatement ps = con.prepareStatement(INSERT_VERIFICATION,new String[]{"id"});
                                     ps.setString(1, user.getEmail().getRawEmail());
                                     ps.setString(2, user.getPassword().getRawPassword());
                                     ps.setString(3, user.getVerificationCode().getCode());
@@ -59,12 +64,10 @@ public class UserDBRepository implements UserRepo {
                         ).getOrElse(none());
         return result.isEmpty() ?
                 Either.left(List.of((Failure) result.get())) : Either.right(new PendingUserId(keyHolder.getKey()));
-//        return result.isEmpty() ?
-//                Either.left(List.of((Failure) result.get())) : Either.right(user);
     }
 
     @Override
-    public Either<Failure, ActiveUser> setEmailAsVerified(VerificationCode code) {
+    public Either<Failure, ActiveUser> setEmailAsVerified(Email email, VerificationCode code) {
         return null;
     }
 
@@ -74,22 +77,31 @@ public class UserDBRepository implements UserRepo {
                 .map(UserDBEntity::toDomainModel);
     }
 
+    public Option<User> findUser(Email email) {
+        return findVerificationByEmail(email).map(UserDBEntity::toDomainModel);
+    }
+
     private Option<UserDBEntity> findUserById(UserId userId) {
         return Try
                 .ofSupplier(() -> of(jdbcTemplate.queryForObject("SELECT u.id as userId, u.email, u.password, u.state as userState FROM app_user u WHERE u.id=?", new BeanPropertyRowMapper<>(UserDBEntity.class), userId.getId())))
                 .getOrElse(none());
     }
 
+    private Option<UserDBEntity> findVerificationByEmail(Email email) {
+        return Try
+                .ofSupplier(() -> of(jdbcTemplate.queryForObject("SELECT id as userId ,email ,password ,code FROM verification WHERE email=?", new BeanPropertyRowMapper<>(UserDBEntity.class), email.getRawEmail())))
+               .getOrElse(none());
+    }
+
     @Override
-    public Option<User> findPendingUser(PendingUserId id){
+    public Option<User> findPendingUser(PendingUserId id) {
         return findPendingUserById(id)
                 .map(UserDBEntity::toDomainModel);
     }
 
-    private Option<UserDBEntity> findPendingUserById(PendingUserId id){
-
+    private Option<UserDBEntity> findPendingUserById(PendingUserId id) {
         return Try
-                .ofSupplier(() -> of(jdbcTemplate.queryForObject("SELECT id as userId,email ,password,code FROM verification WHERE id=?", new BeanPropertyRowMapper<>(UserDBEntity.class),id.getId())))
+                .ofSupplier(() -> of(jdbcTemplate.queryForObject("SELECT id as userId ,email ,password ,code FROM verification WHERE id=?", new BeanPropertyRowMapper<>(UserDBEntity.class), id.getId())))
                 .getOrElse(none());
     }
 }

@@ -2,9 +2,6 @@ package lk.mazarin.demo.hexagonal.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vavr.control.Either;
-import lk.mazarin.demo.hexagonal.persistence.respository.UserDBRepository;
-import lk.mazarin.demo.hexagonal.persistence.service.MockEmailNotificationService;
-import lk.mazarin.demo.hexagonal.persistence.service.UserServiceImpl;
 import lk.mazarin.demo.hexagonal.registration.domain.user.service.api.UserService;
 import lk.mazarin.demo.hexagonal.registration.domain.user.service.spi.NotificationService;
 import lk.mazarin.demo.hexagonal.registration.domain.user.service.spi.UserRepo;
@@ -39,13 +36,13 @@ public class UserRegistrationControllerTest {
     static class Configuration {
 
         @MockBean
-        private UserDBRepository userDBRepository;
+        private UserRepo userRepo;
 
         @MockBean
-        private MockEmailNotificationService notificationService;
+        private NotificationService notificationService;
 
         @MockBean
-        private UserServiceImpl userService;
+        private UserService userService;
     }
 
     @Autowired
@@ -62,7 +59,7 @@ public class UserRegistrationControllerTest {
         Either<List<Failure>, Boolean> result = Either.left(Arrays.asList(new Failure(Failure.Type.NoUppercase, "No uppercase letters found")));
         doReturn(result)
                 .when(userService)
-                .register(any(UserDBRepository.class), any(NotificationService.class), any(PendingUser.class));
+                .register(any(UserRepo.class), any(NotificationService.class), any(PendingUser.class));
 
 
         mockMvc.perform(post("/user/create")

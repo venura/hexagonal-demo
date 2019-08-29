@@ -33,6 +33,9 @@ Postgresql:
 - sudo -u postgres psql
 - alter user hex_demo with encrypted password 'xxxxxx';
 - grant all privileges on database hexagonal_demo to hex_demo;
+- GRANT ALL PRIVILEGES ON TABLE verification TO hex_demo;
+- GRANT ALL PRIVILEGES ON TABLE app_user TO hex_demo;
+- GRANT ALL PRIVILEGES ON TABLE verification_id_seq TO hex_demo;
 
 Start application with command:
 cd registration/infra/application/

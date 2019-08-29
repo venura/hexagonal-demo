@@ -33,3 +33,10 @@ Postgresql:
 - sudo -u postgres psql
 - alter user hex_demo with encrypted password 'xxxxxx';
 - grant all privileges on database hexagonal_demo to hex_demo;
+
+Start application with command:
+cd registration/infra/application/
+mvn spring-boot:run
+
+curl -d '{ "email": "chal1979@mazarin.lk", "password": "Jkl1234", "verificationCode": "sfddf"}' -H "Content-Type: application/json" -X POST http://localhost:8080/user/create
+

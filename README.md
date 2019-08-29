@@ -38,5 +38,5 @@ Start application with command:
 cd registration/infra/application/
 mvn spring-boot:run
 
-curl -d '{ "email": "chal1979@mazarin.lk", "password": "Jkl1234", "verificationCode": "sfddf"}' -H "Content-Type: application/json" -X POST http://localhost:8080/user/create
+curl -d '{ "email": "xxx@xxxxx.xx", "password": "Jkl1234", "verificationCode": "sfddf"}' -H "Content-Type: application/json" -X POST http://localhost:8080/user/create
 

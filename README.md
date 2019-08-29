@@ -25,11 +25,11 @@ Acceptance criteria:
 - I should get an error message telling me what I
 did wrong if I enter an insecure password
 
-* Setting up database with application user
+Setting up database with application user
 
 Postgresql:
 
-sudo -u postgres createuser hex_demo
-sudo -u postgres psql
-alter user hex_demo with encrypted password 'xxxxxx';
-grant all privileges on database hexagonal_demo to hex_demo;
+- sudo -u postgres createuser hex_demo
+- sudo -u postgres psql
+- alter user hex_demo with encrypted password 'xxxxxx';
+- grant all privileges on database hexagonal_demo to hex_demo;
